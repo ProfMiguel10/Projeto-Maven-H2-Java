@@ -1,0 +1,14 @@
+maven-archetype-quickstart
+
+Criar o quickstar pom.xml
+
+A Solução Perfeita: Banco H2 em Memória
+
+O H2 é um banco de dados Java que pode rodar 100% na memória RAM. Você só precisa adicionar a dependência (ou o arquivo .jar) dele no projeto. Quando a aplicação roda, o banco nasce; quando ela fecha, ele some. É perfeito para demonstrações.
+
+Acresentar dependência do H2:
+  <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>2.2.224</version>
+    </dependency>  
