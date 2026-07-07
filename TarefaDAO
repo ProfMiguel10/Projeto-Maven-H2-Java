@@ -1,0 +1,79 @@
+package br.crud.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.crud.conexao.Conexao;
+import br.crud.model.Tarefa;
+
+public class TarefaDAO {
+
+	// 1. CREATE (Salvar uma nova tarefa)
+	public void salvar(String descricao) {
+		String sql = "INSERT INTO tarefas (descricao, concluida) VALUES (?, false)";
+
+		try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setString(1, descricao);
+			System.out.println(stmt.executeUpdate());
+			System.out.println("-> Tarefa '" + descricao + "' adicionada!");
+
+		} catch (Exception e) {
+			System.err.println("Erro ao salvar tarefa: " + e.getMessage());
+		}
+	}
+
+	// 2. READ (Listar todas as tarefas)
+	public List<Tarefa> listarTodas() {
+		List<Tarefa> tarefas = new ArrayList<>();
+		String sql = "SELECT * FROM tarefas";
+
+		try (Connection conn = Conexao.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery()) {
+
+			while (rs.next()) {
+				Tarefa t = new Tarefa(rs.getInt("id"), rs.getString("descricao"), rs.getBoolean("concluida"));
+				tarefas.add(t);
+			}
+
+		} catch (Exception e) {
+			System.err.println("Erro ao listar tarefas: " + e.getMessage());
+		}
+		return tarefas;
+	}
+
+	// 3. UPDATE (Marcar como concluída)
+	public void atualizarStatus(int id, boolean concluida) {
+		String sql = "UPDATE tarefas SET concluida = ? WHERE id = ?";
+
+		try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setBoolean(1, concluida);
+			stmt.setInt(2, id);
+			stmt.executeUpdate();
+			System.out.println("-> Tarefa ID " + id + " atualizada!");
+
+		} catch (Exception e) {
+			System.err.println("Erro ao atualizar tarefa: " + e.getMessage());
+		}
+	}
+
+	// 4. DELETE (Remover uma tarefa)
+	public void deletar(int id) {
+		String sql = "DELETE FROM tarefas WHERE id = ?";
+
+		try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+			System.out.println("-> Tarefa ID " + id + " removida!");
+
+		} catch (Exception e) {
+			System.err.println("Erro ao deletar tarefa: " + e.getMessage());
+		}
+	}
+}
